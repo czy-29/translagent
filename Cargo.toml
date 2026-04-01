@@ -1,7 +1,7 @@
 [package]
 name = "translagent"
 authors = ["29 <791603901@qq.com>"]
-version = "0.0.1"
+version = "0.0.2"
 license = "MIT/Apache-2.0"
 readme = "README.md"
 keywords = ["documentation", "ai", "agent", "translation", "llm"]
@@ -9,7 +9,7 @@ categories = ["artificial-intelligence", "command-line-utilities", "internationa
 repository = "https://github.com/czy-29/translagent"
 homepage = "https://github.com/czy-29/translagent"
 description = """
-只需要一个toml即可接入的，支持主流SSG的，声明式的，可持续更新/构建的，AI文档翻译智能体。
+只需要一个toml即可接入的，支持主流SSG的，声明式的，可持续更新/构建的，全自动的，AI文档翻译智能体。
 """
 edition = "2024"
 
