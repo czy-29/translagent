@@ -1,0 +1,44 @@
+[package]
+name = "translagent"
+authors = ["29 <791603901@qq.com>"]
+version = "0.0.1"
+license = "MIT/Apache-2.0"
+readme = "README.md"
+keywords = ["documentation", "ai", "agent", "translation", "llm"]
+categories = ["artificial-intelligence", "command-line-utilities", "internationalization", "localization", "text-processing"]
+repository = "https://github.com/czy-29/translagent"
+homepage = "https://github.com/czy-29/translagent"
+description = """
+只需要一个toml即可接入的，支持主流SSG的，声明式的，可持续更新/构建的，AI文档翻译智能体。
+"""
+edition = "2024"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+# 因为依赖项 `mdbook-driver` 的MSRV是 `1.88.0`。
+rust-version = "1.88.0"
+
+[package.metadata.docs.rs]
+all-features = true
+
+[dependencies]
+anyhow = "1.0.102"
+clap = { version = "4.6.0", features = ["derive"] }
+dotenvy = "0.15.7"
+git2 = "0.20.4"
+rig-core = "0.34.0"
+mdbook-driver = { version = "0.5.2", features = ["search"] }
+tokio = { version = "1.50.0", features = ["full"] }
+toml = "1.1.1"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["chrono"] }
+
+[target.'cfg(windows)'.dependencies]
+nu-ansi-term = "0.50.3"
+
+[dev-dependencies]
+
+[build-dependencies]
+version_check = "0.9.5"
+
+[features]
