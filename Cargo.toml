@@ -45,4 +45,3 @@ nu-ansi-term = "0.50.3"
 version_check = "0.9.5"
 
 [features]
-add = []

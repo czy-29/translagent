@@ -1,6 +1,5 @@
 #![cfg_attr(nightly, feature(doc_cfg))]
 
-#[cfg(any(test, feature = "add"))]
 pub fn add(left: usize, right: usize) -> usize {
     left + right
 }
