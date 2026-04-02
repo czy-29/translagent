@@ -2756,6 +2756,7 @@ dependencies = [
  "toml 1.1.1+spec-1.1.0",
  "tracing",
  "tracing-subscriber",
+ "url",
  "version_check",
 ]
 

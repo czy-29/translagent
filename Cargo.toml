@@ -33,6 +33,7 @@ tokio = { version = "1.50.0", features = ["full"] }
 toml = "1.1.1"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["chrono"] }
+url = "2.5.8"
 
 [target.'cfg(windows)'.dependencies]
 nu-ansi-term = "0.50.3"
