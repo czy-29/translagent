@@ -1,0 +1,69 @@
+# version = "1.0"
+
+[defaults]
+# deploy_target = "target"
+# llm_provider = "deepseek"
+
+[runner]
+# exec_env = "github_actions"
+# cron = "*/5 * * * *"
+# tz = "Asia/Shanghai"
+# use_secrets = ["", ""]
+
+# Zola
+[[sites]]
+site = {
+    name = "zola",
+    desc = "Zola文档翻译",
+    # entry = "zola",
+}
+source = {
+    git = "https://github.com/getzola/zola.git",
+    dir = "docs",
+    # lang = "en",
+}
+target = {
+    git = "https://github.com/czy-29/docs.29bot.com.git",
+    dir = "zola",
+    # lang = "zh",
+    # use_github_token = true,
+}
+translate = {
+    # exts = ["md"],
+    # provider = "deepseek",
+}
+framework = {
+    preset = "zola",
+}
+deploy = {
+    # target = "target",
+}
+
+# mdBook
+[[sites]]
+site = {
+    name = "mdbook",
+    desc = "mdBook文档翻译",
+    # entry = "mdbook",
+}
+source = {
+    git = "https://github.com/rust-lang/mdBook.git",
+    dir = "guide",
+    # lang = "en",
+}
+target = {
+    git = "https://github.com/czy-29/docs.29bot.com.git",
+    dir = "mdbook",
+    # lang = "zh",
+    # use_github_token = true,
+}
+translate = {
+    # exts = ["md"],
+    # provider = "deepseek",
+}
+framework = {
+    preset = "mdbook",
+}
+deploy = {
+    # target = "target",
+}
