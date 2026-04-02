@@ -2751,6 +2751,7 @@ dependencies = [
  "mdbook-driver",
  "nu-ansi-term",
  "rig-core",
+ "semver",
  "serde",
  "tokio",
  "toml 1.1.1+spec-1.1.0",
