@@ -13,7 +13,7 @@
 # Zola
 [[spec.sites]]
 meta = {
-    name = "zola",
+    name = "zola", # 限制ASCII
     desc = "Zola文档翻译",
     # entry = "zola",
 }
