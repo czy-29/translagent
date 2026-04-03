@@ -11,7 +11,7 @@
     },
     "sites": [
       {
-        "site": {
+        "meta": {
           "name": "zola",
           "desc": "Zola文档翻译"
         },
@@ -31,7 +31,7 @@
         }
       },
       {
-        "site": {
+        "meta": {
           "name": "mdbook",
           "desc": "mdBook文档翻译"
         },

@@ -12,7 +12,7 @@
 
 # Zola
 [[spec.sites]]
-site = {
+meta = {
     name = "zola",
     desc = "Zola文档翻译",
     # entry = "zola",
@@ -41,7 +41,7 @@ deploy = {
 
 # mdBook
 [[spec.sites]]
-site = {
+meta = {
     name = "mdbook",
     desc = "mdBook文档翻译",
     # entry = "mdbook",
