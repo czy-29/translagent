@@ -1,17 +1,17 @@
 # version = "1.0"
 
-[defaults]
+[spec.defaults]
 # deploy_target = "target"
 # llm_provider = "deepseek"
 
-[runner]
+[spec.runner]
 # exec_env = "github_actions"
 # cron = "*/5 * * * *"
 # tz = "Asia/Shanghai"
 # use_secrets = ["", ""]
 
 # Zola
-[[sites]]
+[[spec.sites]]
 site = {
     name = "zola",
     desc = "Zola文档翻译",
@@ -40,7 +40,7 @@ deploy = {
 }
 
 # mdBook
-[[sites]]
+[[spec.sites]]
 site = {
     name = "mdbook",
     desc = "mdBook文档翻译",

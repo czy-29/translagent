@@ -1,53 +1,55 @@
 {
   "version": "1.0",
-  "defaults": {
-    "deploy_target": "target",
-    "llm_provider": "deepseek"
-  },
-  "runner": {
-    "exec_env": "github_actions",
-    "tz": "Asia/Shanghai"
-  },
-  "sites": [
-    {
-      "site": {
-        "name": "zola",
-        "desc": "Zola文档翻译"
-      },
-      "source": {
-        "git": "https://github.com/getzola/zola.git",
-        "dir": "docs"
-      },
-      "target": {
-        "git": "https://github.com/czy-29/docs.29bot.com.git",
-        "dir": "zola"
-      },
-      "translate": {
-        "exts": ["md", "markdown"]
-      },
-      "framework": {
-        "preset": "zola"
-      }
+  "spec": {
+    "defaults": {
+      "deploy_target": "target",
+      "llm_provider": "deepseek"
     },
-    {
-      "site": {
-        "name": "mdbook",
-        "desc": "mdBook文档翻译"
+    "runner": {
+      "exec_env": "github_actions",
+      "tz": "Asia/Shanghai"
+    },
+    "sites": [
+      {
+        "site": {
+          "name": "zola",
+          "desc": "Zola文档翻译"
+        },
+        "source": {
+          "git": "https://github.com/getzola/zola.git",
+          "dir": "docs"
+        },
+        "target": {
+          "git": "https://github.com/czy-29/docs.29bot.com.git",
+          "dir": "zola"
+        },
+        "translate": {
+          "exts": ["md", "markdown"]
+        },
+        "framework": {
+          "preset": "zola"
+        }
       },
-      "source": {
-        "git": "https://github.com/rust-lang/mdBook.git",
-        "dir": "guide"
-      },
-      "target": {
-        "git": "https://github.com/czy-29/docs.29bot.com.git",
-        "dir": "mdbook"
-      },
-      "translate": {
-        "exts": ["md", "markdown"]
-      },
-      "framework": {
-        "preset": "mdbook"
+      {
+        "site": {
+          "name": "mdbook",
+          "desc": "mdBook文档翻译"
+        },
+        "source": {
+          "git": "https://github.com/rust-lang/mdBook.git",
+          "dir": "guide"
+        },
+        "target": {
+          "git": "https://github.com/czy-29/docs.29bot.com.git",
+          "dir": "mdbook"
+        },
+        "translate": {
+          "exts": ["md", "markdown"]
+        },
+        "framework": {
+          "preset": "mdbook"
+        }
       }
-    }
-  ]
+    ]
+  }
 }
