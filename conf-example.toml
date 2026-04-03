@@ -28,12 +28,12 @@ target = {
     # lang = "zh",
     # use_github_token = true,
 }
+framework = {
+    preset = "zola",
+}
 translate = {
     # exts = ["md"],
     # provider = "deepseek",
-}
-framework = {
-    preset = "zola",
 }
 deploy = {
     # target = "target",
@@ -57,12 +57,12 @@ target = {
     # lang = "zh",
     # use_github_token = true,
 }
+framework = {
+    preset = "mdbook",
+}
 translate = {
     # exts = ["md"],
     # provider = "deepseek",
-}
-framework = {
-    preset = "mdbook",
 }
 deploy = {
     # target = "target",

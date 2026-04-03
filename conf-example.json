@@ -23,11 +23,11 @@
           "git": "https://github.com/czy-29/docs.29bot.com.git",
           "dir": "zola"
         },
-        "translate": {
-          "exts": ["md", "markdown"]
-        },
         "framework": {
           "preset": "zola"
+        },
+        "translate": {
+          "exts": ["md", "markdown"]
         }
       },
       {
@@ -43,11 +43,11 @@
           "git": "https://github.com/czy-29/docs.29bot.com.git",
           "dir": "mdbook"
         },
-        "translate": {
-          "exts": ["md", "markdown"]
-        },
         "framework": {
           "preset": "mdbook"
+        },
+        "translate": {
+          "exts": ["md", "markdown"]
         }
       }
     ]
