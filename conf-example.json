@@ -6,7 +6,8 @@
         "provider": "deepseek"
       },
       "deploy": {
-        "target": "target"
+        "target": "target",
+        "source_lang": true
       }
     },
     "runner": {

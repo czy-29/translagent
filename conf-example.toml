@@ -4,6 +4,7 @@
 # translate = { provider = "deepseek" }
 deploy = {
     # target = "target",
+    source_lang = true, # default: false
 }
 
 [spec.runner]
@@ -37,6 +38,7 @@ translate = {
 }
 deploy = {
     # target = "target",
+    # source_lang = true,
 }
 
 # mdBook
@@ -64,4 +66,5 @@ translate = {
 }
 deploy = {
     # target = "target",
+    # source_lang = true,
 }
