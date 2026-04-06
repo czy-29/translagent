@@ -28,7 +28,7 @@ dotenvy = "0.15.7"
 git2 = "0.20.4"
 rig-core = "0.34.0"
 mdbook-driver = { version = "0.5.2", features = ["search"] }
-semver = { version = "1.0.27", features = ["serde"] }
+semver = { version = "1.0.28", features = ["serde"] }
 serde = "1.0.228"
 tokio = { version = "1.51.0", features = ["full"] }
 toml = "1.1.2"
