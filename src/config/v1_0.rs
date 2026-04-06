@@ -13,19 +13,16 @@ pub struct Spec {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub struct Defaults {
-    deploy_target: Option<DeployTarget>,
-    llm_provider: Option<LLMProvider>,
+    translate: Option<TranslateDefaults>,
+    deploy: Option<DeployDefaults>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub enum DeployTarget {
-    Target,
+pub struct TranslateDefaults {
+    provider: Option<Provider>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub enum LLMProvider {
-    Deepseek,
-}
+pub type DeployDefaults = Deploy;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Runner {
@@ -76,4 +73,17 @@ pub struct Framework {}
 pub struct Translate {}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub struct Deploy {}
+pub enum Provider {
+    Deepseek,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+pub struct Deploy {
+    target: Option<DeployTarget>,
+    source_lang: Option<bool>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+pub enum DeployTarget {
+    Target,
+}
