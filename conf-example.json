@@ -9,10 +9,9 @@
       "exec_env": "github_actions",
       "tz": "Asia/Shanghai"
     },
-    "sites": [
-      {
+    "sites": {
+      "zola": {
         "meta": {
-          "name": "zola",
           "desc": "Zola文档翻译"
         },
         "source": {
@@ -30,9 +29,8 @@
           "exts": ["md", "markdown"]
         }
       },
-      {
+      "mdbook": {
         "meta": {
-          "name": "mdbook",
           "desc": "mdBook文档翻译"
         },
         "source": {
@@ -50,6 +48,6 @@
           "exts": ["md", "markdown"]
         }
       }
-    ]
+    }
   }
 }

@@ -11,11 +11,9 @@
 # use_secrets = ["", ""]
 
 # Zola
-[[spec.sites]]
+[spec.sites.zola]
 meta = {
-    name = "zola", # 限制ASCII
     desc = "Zola文档翻译",
-    # entry = "zola",
 }
 source = {
     git = "https://github.com/getzola/zola.git",
@@ -40,11 +38,9 @@ deploy = {
 }
 
 # mdBook
-[[spec.sites]]
+[spec.sites.mdbook]
 meta = {
-    name = "mdbook",
     desc = "mdBook文档翻译",
-    # entry = "mdbook",
 }
 source = {
     git = "https://github.com/rust-lang/mdBook.git",
