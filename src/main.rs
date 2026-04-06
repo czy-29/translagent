@@ -3,7 +3,7 @@ use tracing_subscriber::fmt::{format::FmtSpan, time::ChronoLocal};
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
     init_tracing_with_ansi();
-    println!("Hello, world!");
+    tracing::info!("Hello, world!");
     Ok(())
 }
 
