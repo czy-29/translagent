@@ -1,10 +1,14 @@
+use hickory_proto::{ProtoError, rr::domain::Label};
+use indexmap::IndexMap;
 use serde::Deserialize;
+use serde_with::DeserializeFromStr;
+use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Spec {
     defaults: Option<Defaults>,
     runner: Option<Runner>,
-    sites: Vec<Site>,
+    sites: IndexMap<SiteKey, SiteValue>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
@@ -33,8 +37,19 @@ pub enum ExecEnv {
     GithubActions,
 }
 
+#[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr)]
+pub struct SiteKey(Label);
+
+impl FromStr for SiteKey {
+    type Err = ProtoError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        Ok(Self(Label::from_ascii(s)?))
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
-pub struct Site {
+pub struct SiteValue {
     meta: Meta,
     source: Source,
     target: Target,
@@ -45,9 +60,7 @@ pub struct Site {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Meta {
-    name: String, // 限制ASCII
     desc: Option<String>,
-    // entry: Option<String>, // 考虑用URL安全的类型
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
