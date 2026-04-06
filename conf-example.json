@@ -2,6 +2,9 @@
   "version": "1.0",
   "spec": {
     "defaults": {
+      "target": {
+        "use_github_token": false
+      },
       "translate": {
         "provider": "deepseek"
       },

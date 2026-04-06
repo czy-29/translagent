@@ -1,6 +1,9 @@
 # version = "1.0"
 
 [spec.defaults]
+target = {
+    use_github_token = false, # default: true
+}
 # translate = { provider = "deepseek" }
 deploy = {
     # target = "target",
@@ -27,7 +30,7 @@ target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "zola", # default: ""
     # lang = "zh",
-    # use_github_token = true,
+    # use_github_token = false,
 }
 framework = {
     preset = "zola",
@@ -55,7 +58,7 @@ target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "mdbook",
     # lang = "zh",
-    # use_github_token = true,
+    # use_github_token = false,
 }
 framework = {
     preset = "mdbook",
