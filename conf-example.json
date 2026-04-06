@@ -2,8 +2,12 @@
   "version": "1.0",
   "spec": {
     "defaults": {
-      "deploy_target": "target",
-      "llm_provider": "deepseek"
+      "translate": {
+        "provider": "deepseek"
+      },
+      "deploy": {
+        "target": "target"
+      }
     },
     "runner": {
       "exec_env": "github_actions",
