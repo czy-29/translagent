@@ -3,6 +3,7 @@ use indexmap::IndexMap;
 use serde::Deserialize;
 use serde_with::DeserializeFromStr;
 use std::str::FromStr;
+use url::Url;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Spec {
@@ -60,11 +61,15 @@ pub struct Meta {
     desc: Option<String>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub struct Source {}
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+pub struct Source {
+    git: Url,
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub struct Target {}
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+pub struct Target {
+    git: Url,
+}
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub struct Framework {}
