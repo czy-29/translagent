@@ -20,12 +20,12 @@ meta = {
 }
 source = {
     git = "https://github.com/getzola/zola.git",
-    dir = "docs",
+    dir = "docs", # default: ""
     # lang = "en",
 }
 target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
-    dir = "zola",
+    dir = "zola", # default: ""
     # lang = "zh",
     # use_github_token = true,
 }
