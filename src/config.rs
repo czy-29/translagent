@@ -1,10 +1,13 @@
-pub mod v1_0;
+pub mod versions {
+    pub mod latest;
+}
 
 use semver::Version;
 use serde::Deserialize;
+use versions::latest;
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Config {
     version: Option<Version>,
-    spec: v1_0::Spec,
+    spec: latest::Spec,
 }
