@@ -26,7 +26,12 @@ pub struct TranslateDefaults {
     pub provider: Provider,
 }
 
-pub type DeployDefaults = Deploy;
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
+pub struct DeployDefaults {
+    pub target: DeployTarget,
+    pub source_lang: bool,
+}
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
@@ -99,8 +104,8 @@ pub enum Provider {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Deploy {
-    pub target: DeployTarget,
-    pub source_lang: bool,
+    pub target: Option<DeployTarget>,
+    pub source_lang: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
