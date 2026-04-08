@@ -2,6 +2,7 @@ use hickory_proto::{ProtoError, rr::domain::Label};
 use indexmap::IndexMap;
 use serde::Deserialize;
 use serde_with::DeserializeFromStr;
+use smart_default::SmartDefault;
 use std::str::FromStr;
 use url::Url;
 
@@ -16,8 +17,16 @@ pub struct Spec {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
+    pub target: TargetDefaults,
     pub translate: TranslateDefaults,
     pub deploy: DeployDefaults,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
+#[serde(default)]
+pub struct TargetDefaults {
+    #[default = true]
+    pub use_github_token: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
