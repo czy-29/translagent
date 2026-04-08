@@ -4,10 +4,10 @@ pub mod versions {
 
 use semver::Version;
 use serde::Deserialize;
-use versions::latest;
+use toml::Value;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
-pub struct Config {
+#[derive(Debug, Clone, PartialEq, Deserialize)]
+pub struct VersionSpec {
     version: Option<Version>,
-    spec: latest::Spec,
+    spec: Value,
 }

@@ -1,7 +1,6 @@
 #![cfg_attr(nightly, feature(doc_cfg))]
 
 pub mod config;
-pub use config::Config;
 
 pub fn add(left: usize, right: usize) -> usize {
     left + right
