@@ -5,33 +5,38 @@ use serde_with::DeserializeFromStr;
 use std::str::FromStr;
 use url::Url;
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
+#[serde(default)]
 pub struct Spec {
-    defaults: Option<Defaults>,
-    runner: Option<Runner>,
+    defaults: Defaults,
+    runner: Runner,
     sites: IndexMap<SiteKey, SiteValue>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct Defaults {
-    translate: Option<TranslateDefaults>,
-    deploy: Option<DeployDefaults>,
+    translate: TranslateDefaults,
+    deploy: DeployDefaults,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct TranslateDefaults {
-    provider: Option<Provider>,
+    provider: Provider,
 }
 
 pub type DeployDefaults = Deploy;
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct Runner {
-    exec_env: Option<ExecEnv>,
+    exec_env: ExecEnv,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 pub enum ExecEnv {
+    #[default]
     GithubActions,
 }
 
@@ -48,17 +53,24 @@ impl FromStr for SiteKey {
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct SiteValue {
+    #[serde(default)]
     meta: Meta,
+
     source: Source,
     target: Target,
     framework: Framework,
-    translate: Option<Translate>,
-    deploy: Option<Deploy>,
+
+    #[serde(default)]
+    translate: Translate,
+
+    #[serde(default)]
+    deploy: Deploy,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct Meta {
-    desc: Option<String>,
+    desc: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
@@ -74,21 +86,25 @@ pub struct Target {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub struct Framework {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct Translate {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 pub enum Provider {
+    #[default]
     Deepseek,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(default)]
 pub struct Deploy {
-    target: Option<DeployTarget>,
-    source_lang: Option<bool>,
+    target: DeployTarget,
+    source_lang: bool,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 pub enum DeployTarget {
+    #[default]
     Target,
 }
