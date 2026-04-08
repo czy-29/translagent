@@ -8,22 +8,22 @@ use url::Url;
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Spec {
-    defaults: Defaults,
-    runner: Runner,
-    sites: IndexMap<SiteKey, SiteValue>,
+    pub defaults: Defaults,
+    pub runner: Runner,
+    pub sites: IndexMap<SiteKey, SiteValue>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
-    translate: TranslateDefaults,
-    deploy: DeployDefaults,
+    pub translate: TranslateDefaults,
+    pub deploy: DeployDefaults,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct TranslateDefaults {
-    provider: Provider,
+    pub provider: Provider,
 }
 
 pub type DeployDefaults = Deploy;
@@ -31,7 +31,7 @@ pub type DeployDefaults = Deploy;
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Runner {
-    exec_env: ExecEnv,
+    pub exec_env: ExecEnv,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -41,7 +41,7 @@ pub enum ExecEnv {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr)]
-pub struct SiteKey(Label);
+pub struct SiteKey(pub Label);
 
 impl FromStr for SiteKey {
     type Err = ProtoError;
@@ -54,33 +54,33 @@ impl FromStr for SiteKey {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct SiteValue {
     #[serde(default)]
-    meta: Meta,
+    pub meta: Meta,
 
-    source: Source,
-    target: Target,
-    framework: Framework,
-
-    #[serde(default)]
-    translate: Translate,
+    pub source: Source,
+    pub target: Target,
+    pub framework: Framework,
 
     #[serde(default)]
-    deploy: Deploy,
+    pub translate: Translate,
+
+    #[serde(default)]
+    pub deploy: Deploy,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Meta {
-    desc: String,
+    pub desc: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Source {
-    git: Url,
+    pub git: Url,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Target {
-    git: Url,
+    pub git: Url,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
@@ -99,8 +99,8 @@ pub enum Provider {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Deploy {
-    target: DeployTarget,
-    source_lang: bool,
+    pub target: DeployTarget,
+    pub source_lang: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
