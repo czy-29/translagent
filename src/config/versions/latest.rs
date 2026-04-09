@@ -6,6 +6,22 @@ use smart_default::SmartDefault;
 use std::str::FromStr;
 use url::Url;
 
+pub mod types {
+    use super::*;
+    use relative_path::RelativePathBuf;
+
+    #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default)]
+    pub struct Subdir(pub RelativePathBuf);
+
+    impl FromStr for Subdir {
+        type Err = String;
+
+        fn from_str(_s: &str) -> Result<Self, Self::Err> {
+            todo!()
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Spec {
