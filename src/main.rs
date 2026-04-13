@@ -1,7 +1,9 @@
+use snafu::Whatever;
 use tracing_subscriber::fmt::{format::FmtSpan, time::ChronoLocal};
 
+#[snafu::report]
 #[tokio::main]
-async fn main() -> Result<(), anyhow::Error> {
+async fn main() -> Result<(), Whatever> {
     init_tracing_with_ansi();
     tracing::info!("Hello, world!");
     Ok(())
