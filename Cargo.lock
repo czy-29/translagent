@@ -3169,7 +3169,6 @@ dependencies = [
 name = "translagent"
 version = "0.0.3"
 dependencies = [
- "anyhow",
  "clap",
  "config",
  "dotenvy",
