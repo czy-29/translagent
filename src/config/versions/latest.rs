@@ -8,16 +8,112 @@ use url::Url;
 
 pub mod types {
     use super::*;
-    use relative_path::RelativePathBuf;
+    use relative_path::{Component, FromPathError, RelativePathBuf};
+    use snafu::prelude::*;
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default)]
     pub struct Subdir(pub RelativePathBuf);
 
     impl FromStr for Subdir {
-        type Err = String;
+        type Err = SubdirError;
 
-        fn from_str(_s: &str) -> Result<Self, Self::Err> {
-            todo!()
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            let normalized = RelativePathBuf::from_path(s)?.normalize();
+
+            ensure!(
+                !matches!(normalized.components().next(), Some(Component::ParentDir)),
+                EscapedToParentSnafu { normalized }
+            );
+
+            Ok(Self(normalized))
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq, Snafu)]
+    pub enum SubdirError {
+        #[snafu(transparent)]
+        FromPath { source: FromPathError },
+        #[snafu(display("normalized path `{normalized}` escapes to parent directory"))]
+        EscapedToParent { normalized: RelativePathBuf },
+    }
+
+    #[cfg(test)]
+    mod tests {
+        use super::*;
+
+        #[test]
+        fn subdir() {
+            use relative_path::RelativePath;
+
+            fn exact(path: &str) {
+                normalized(path, path);
+            }
+
+            fn normalized(before: &str, after: &str) {
+                assert_eq!(
+                    Subdir::from_str(before).unwrap().0.as_relative_path(),
+                    RelativePath::new(after)
+                );
+            }
+
+            fn non_relative(path: &str) {
+                assert!(matches!(
+                    Subdir::from_str(path),
+                    Err(SubdirError::FromPath { source: _ })
+                ));
+            }
+
+            fn escaped(path: &str) {
+                assert!(matches!(
+                    Subdir::from_str(path),
+                    Err(SubdirError::EscapedToParent { normalized: _ })
+                ));
+            }
+
+            exact("");
+            exact("test");
+            exact("test1/test2");
+
+            normalized(".", "");
+            normalized("./.", "");
+            normalized("./test/..", "");
+            normalized("test/..", "");
+            normalized("test/../.", "");
+            normalized("test/./..", "");
+
+            normalized("./test1", "test1");
+            normalized("test1/.", "test1");
+            normalized("././test1", "test1");
+            normalized("./test1/.", "test1");
+            normalized("test1/./.", "test1");
+            normalized("test1/../test1", "test1");
+            normalized("test1/test2/..", "test1");
+
+            non_relative("/test");
+            non_relative("C:/test");
+            non_relative("C:\\test");
+
+            escaped("..");
+            escaped("./..");
+            escaped("../.");
+            escaped("../test");
+
+            escaped("././..");
+            escaped("./../.");
+            escaped("./../..");
+            escaped("./../test");
+
+            escaped(".././.");
+            escaped(".././..");
+            escaped(".././test");
+            escaped("../../.");
+            escaped("../../..");
+            escaped("../../test");
+            escaped("../test/.");
+            escaped("../test/..");
+            escaped("../test1/test2");
+
+            escaped("test/../..");
         }
     }
 }
