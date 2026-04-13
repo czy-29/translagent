@@ -28,7 +28,7 @@ config = "0.15.22"
 dotenvy = "0.15.7"
 git2 = "0.20.4"
 hickory-proto = { version = "0.25.2", default-features = false }
-indexmap = { version = "2.13.1", features = ["serde"] }
+indexmap = { version = "2.14.0", features = ["serde"] }
 mdbook-driver = { version = "0.5.2", features = ["search"] }
 relative-path = "2.0.1"
 rig-core = "0.34.0"
