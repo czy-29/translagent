@@ -4,6 +4,7 @@ use serde::Deserialize;
 use serde_with::DeserializeFromStr;
 use smart_default::SmartDefault;
 use std::str::FromStr;
+use types::Subdir;
 use url::Url;
 
 pub mod types {
@@ -129,6 +130,7 @@ pub struct Spec {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
+    pub source: SourceDefaults,
     pub target: TargetDefaults,
     pub translate: TranslateDefaults,
     pub deploy: DeployDefaults,
@@ -136,8 +138,23 @@ pub struct Defaults {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
 #[serde(default)]
+pub struct SourceDefaults {
+    #[default(Lang::En)]
+    pub lang: Lang,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+pub enum Lang {
+    En,
+    Zh,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
+#[serde(default)]
 pub struct TargetDefaults {
-    #[default = true]
+    #[default(Lang::Zh)]
+    pub lang: Lang,
+    #[default(true)]
     pub use_github_token: bool,
 }
 
@@ -148,10 +165,22 @@ pub struct TranslateDefaults {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+pub enum Provider {
+    #[default]
+    Deepseek,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct DeployDefaults {
     pub target: DeployTarget,
     pub source_lang: bool,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+pub enum DeployTarget {
+    #[default]
+    Target,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -202,24 +231,40 @@ pub struct Meta {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Source {
     pub git: Url,
+    #[serde(default)]
+    pub dir: Subdir,
+    pub lang: Option<Lang>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Target {
     pub git: Url,
+    #[serde(default)]
+    pub dir: Subdir,
+    pub lang: Option<Lang>,
+    pub use_github_token: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
-pub struct Framework {}
+pub struct Framework {
+    pub preset: Preset,
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+pub enum Preset {
+    Zola,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
 #[serde(default)]
-pub struct Translate {}
+pub struct Translate {
+    #[default(default_translate_exts())]
+    pub exts: Vec<String>,
+    pub provider: Option<Provider>,
+}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-pub enum Provider {
-    #[default]
-    Deepseek,
+fn default_translate_exts() -> Vec<String> {
+    vec!["md".into()]
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -227,10 +272,4 @@ pub enum Provider {
 pub struct Deploy {
     pub target: Option<DeployTarget>,
     pub source_lang: Option<bool>,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-pub enum DeployTarget {
-    #[default]
-    Target,
 }
