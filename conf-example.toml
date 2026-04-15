@@ -1,7 +1,9 @@
 # version = "1.0"
 
 [spec.defaults]
+# source = { lang = "en" }
 target = {
+    # lang = "zh", # target.lang与source.lang不可相同
     use_github_token = false, # default: true
 }
 # translate = { provider = "deepseek" }
@@ -29,7 +31,7 @@ source = {
 target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "zola", # default: ""
-    # lang = "zh", # target.lang与source.lang不可相同
+    # lang = "zh",
     # use_github_token = false,
 }
 framework = {
