@@ -29,7 +29,7 @@ source = {
 target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "zola", # default: ""
-    # lang = "zh",
+    # lang = "zh", # target.lang与source.lang不可相同
     # use_github_token = false,
 }
 framework = {
