@@ -1,5 +1,5 @@
 use hickory_proto::{ProtoError, rr::domain::Label};
-use indexmap::IndexMap;
+use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
 use serde_with::DeserializeFromStr;
 use smart_default::SmartDefault;
@@ -127,7 +127,7 @@ pub struct Spec {
     pub sites: IndexMap<SiteKey, SiteValue>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
     pub source: SourceDefaults,
@@ -149,13 +149,17 @@ pub enum Lang {
     Zh,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct TargetDefaults {
-    #[default(_code = "vec![Lang::Zh]")]
-    pub langs: Vec<Lang>,
+    #[default(default_target_langs())]
+    pub langs: IndexSet<Lang>,
     #[default(true)]
     pub use_github_token: bool,
+}
+
+fn default_target_langs() -> IndexSet<Lang> {
+    indexset! { Lang::Zh }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -206,7 +210,7 @@ impl FromStr for SiteKey {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct SiteValue {
     #[serde(default)]
     pub meta: Meta,
@@ -236,12 +240,12 @@ pub struct Source {
     pub lang: Option<Lang>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Target {
     pub git: Url,
     #[serde(default)]
     pub dir: Subdir,
-    pub langs: Option<Vec<Lang>>,
+    pub langs: Option<IndexSet<Lang>>,
     pub use_github_token: Option<bool>,
 }
 
@@ -255,16 +259,16 @@ pub enum Preset {
     Zola,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct Translate {
     #[default(default_translate_exts())]
-    pub exts: Vec<String>,
+    pub exts: IndexSet<String>,
     pub provider: Option<Provider>,
 }
 
-fn default_translate_exts() -> Vec<String> {
-    vec!["md".into()]
+fn default_translate_exts() -> IndexSet<String> {
+    indexset! { "md".into() }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
