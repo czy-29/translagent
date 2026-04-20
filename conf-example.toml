@@ -3,7 +3,7 @@
 [spec.defaults]
 # source = { lang = "en" }
 target = {
-    # lang = "zh", # target.lang与source.lang不可相同
+    # langs = ["zh"], # target.langs不能为空，且不可包含source.lang
     use_github_token = false, # default: true
 }
 # translate = { provider = "deepseek" }
@@ -31,14 +31,14 @@ source = {
 target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "zola", # default: ""
-    # lang = "zh",
+    # langs = ["zh"],
     # use_github_token = false,
 }
 framework = {
     preset = "zola",
 }
 translate = {
-    # exts = ["md"],
+    # exts = ["md"], # 不能为空
     # provider = "deepseek",
 }
 deploy = {
@@ -59,7 +59,7 @@ source = {
 target = {
     git = "https://github.com/czy-29/docs.29bot.com.git",
     dir = "mdbook",
-    # lang = "zh",
+    # langs = ["zh"],
     # use_github_token = false,
 }
 framework = {
