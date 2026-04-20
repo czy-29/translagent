@@ -127,7 +127,7 @@ pub struct Spec {
     pub sites: IndexMap<SiteKey, SiteValue>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
     pub source: SourceDefaults,
@@ -149,11 +149,11 @@ pub enum Lang {
     Zh,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct TargetDefaults {
-    #[default(Lang::Zh)]
-    pub lang: Lang,
+    #[default(_code = "vec![Lang::Zh]")]
+    pub langs: Vec<Lang>,
     #[default(true)]
     pub use_github_token: bool,
 }
@@ -241,7 +241,7 @@ pub struct Target {
     pub git: Url,
     #[serde(default)]
     pub dir: Subdir,
-    pub lang: Option<Lang>,
+    pub langs: Option<Vec<Lang>>,
     pub use_github_token: Option<bool>,
 }
 
