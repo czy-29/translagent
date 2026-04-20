@@ -1,7 +1,7 @@
 use hickory_proto::{ProtoError, rr::domain::Label};
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
-use serde_with::DeserializeFromStr;
+use serde_with::{DeserializeFromStr, SetPreventDuplicates, serde_as};
 use smart_default::SmartDefault;
 use std::str::FromStr;
 use types::Subdir;
@@ -149,9 +149,11 @@ pub enum Lang {
     Zh,
 }
 
+#[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct TargetDefaults {
+    #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_target_langs())]
     pub langs: IndexSet<Lang>,
     #[default(true)]
@@ -240,11 +242,13 @@ pub struct Source {
     pub lang: Option<Lang>,
 }
 
+#[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Target {
     pub git: Url,
     #[serde(default)]
     pub dir: Subdir,
+    #[serde_as(as = "Option<SetPreventDuplicates<_>>")]
     pub langs: Option<IndexSet<Lang>>,
     pub use_github_token: Option<bool>,
 }
@@ -259,9 +263,11 @@ pub enum Preset {
     Zola,
 }
 
+#[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct Translate {
+    #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_translate_exts())]
     pub exts: IndexSet<String>,
     pub provider: Option<Provider>,
