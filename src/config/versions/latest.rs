@@ -1,3 +1,4 @@
+use derive_more::{Display, FromStr};
 use hickory_proto::{ProtoError, rr::domain::Label};
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
@@ -12,7 +13,7 @@ pub mod types {
     use relative_path::{Component, FromPathError, RelativePathBuf};
     use snafu::prelude::*;
 
-    #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default)]
+    #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default, Display)]
     pub struct Subdir(pub RelativePathBuf);
 
     impl FromStr for Subdir {
@@ -143,7 +144,7 @@ pub struct SourceDefaults {
     pub lang: Lang,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, DeserializeFromStr, Display, FromStr)]
 pub enum Lang {
     En,
     Zh,
