@@ -14,7 +14,7 @@ pub mod types {
     use snafu::prelude::*;
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default, Display)]
-    pub struct Subdir(pub RelativePathBuf);
+    pub struct Subdir(RelativePathBuf);
 
     impl FromStr for Subdir {
         type Err = SubdirError;
@@ -124,26 +124,26 @@ pub mod types {
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Spec {
-    pub defaults: Defaults,
-    pub runner: Runner,
+    defaults: Defaults,
+    runner: Runner,
     #[serde_as(as = "MapPreventDuplicates<_, _>")]
-    pub sites: IndexMap<SiteKey, SiteValue>,
+    sites: IndexMap<SiteKey, SiteValue>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Defaults {
-    pub source: SourceDefaults,
-    pub target: TargetDefaults,
-    pub translate: TranslateDefaults,
-    pub deploy: DeployDefaults,
+    source: SourceDefaults,
+    target: TargetDefaults,
+    translate: TranslateDefaults,
+    deploy: DeployDefaults,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct SourceDefaults {
     #[default(Lang::En)]
-    pub lang: Lang,
+    lang: Lang,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, DeserializeFromStr, Display, FromStr)]
@@ -158,9 +158,9 @@ pub enum Lang {
 pub struct TargetDefaults {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_target_langs())]
-    pub langs: IndexSet<Lang>,
+    langs: IndexSet<Lang>,
     #[default(true)]
-    pub use_github_token: bool,
+    use_github_token: bool,
 }
 
 fn default_target_langs() -> IndexSet<Lang> {
@@ -170,7 +170,7 @@ fn default_target_langs() -> IndexSet<Lang> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct TranslateDefaults {
-    pub provider: Provider,
+    provider: Provider,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -182,8 +182,8 @@ pub enum Provider {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct DeployDefaults {
-    pub target: DeployTarget,
-    pub source_lang: bool,
+    target: DeployTarget,
+    source_lang: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -195,7 +195,7 @@ pub enum DeployTarget {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Runner {
-    pub exec_env: ExecEnv,
+    exec_env: ExecEnv,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -205,7 +205,7 @@ pub enum ExecEnv {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr)]
-pub struct SiteKey(pub Label);
+pub struct SiteKey(Label);
 
 impl FromStr for SiteKey {
     type Err = ProtoError;
@@ -218,47 +218,47 @@ impl FromStr for SiteKey {
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct SiteValue {
     #[serde(default)]
-    pub meta: Meta,
+    meta: Meta,
 
-    pub source: Source,
-    pub target: Target,
-    pub framework: Framework,
-
-    #[serde(default)]
-    pub translate: Translate,
+    source: Source,
+    target: Target,
+    framework: Framework,
 
     #[serde(default)]
-    pub deploy: Deploy,
+    translate: Translate,
+
+    #[serde(default)]
+    deploy: Deploy,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Meta {
-    pub desc: String,
+    desc: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Source {
-    pub git: Url,
+    git: Url,
     #[serde(default)]
-    pub dir: Subdir,
-    pub lang: Option<Lang>,
+    dir: Subdir,
+    lang: Option<Lang>,
 }
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Target {
-    pub git: Url,
+    git: Url,
     #[serde(default)]
-    pub dir: Subdir,
+    dir: Subdir,
     #[serde_as(as = "Option<SetPreventDuplicates<_>>")]
-    pub langs: Option<IndexSet<Lang>>,
-    pub use_github_token: Option<bool>,
+    langs: Option<IndexSet<Lang>>,
+    use_github_token: Option<bool>,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub struct Framework {
-    pub preset: Preset,
+    preset: Preset,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
@@ -272,8 +272,8 @@ pub enum Preset {
 pub struct Translate {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_translate_exts())]
-    pub exts: IndexSet<String>,
-    pub provider: Option<Provider>,
+    exts: IndexSet<String>,
+    provider: Option<Provider>,
 }
 
 fn default_translate_exts() -> IndexSet<String> {
@@ -283,6 +283,6 @@ fn default_translate_exts() -> IndexSet<String> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Deploy {
-    pub target: Option<DeployTarget>,
-    pub source_lang: Option<bool>,
+    target: Option<DeployTarget>,
+    source_lang: Option<bool>,
 }
