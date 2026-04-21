@@ -2,7 +2,7 @@ use derive_more::{Display, FromStr};
 use hickory_proto::{ProtoError, rr::domain::Label};
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
-use serde_with::{DeserializeFromStr, SetPreventDuplicates, serde_as};
+use serde_with::{DeserializeFromStr, MapPreventDuplicates, SetPreventDuplicates, serde_as};
 use smart_default::SmartDefault;
 use std::str::FromStr;
 use types::Subdir;
@@ -120,11 +120,13 @@ pub mod types {
     }
 }
 
+#[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
 pub struct Spec {
     pub defaults: Defaults,
     pub runner: Runner,
+    #[serde_as(as = "MapPreventDuplicates<_, _>")]
     pub sites: IndexMap<SiteKey, SiteValue>,
 }
 
@@ -209,7 +211,7 @@ impl FromStr for SiteKey {
     type Err = ProtoError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self(Label::from_ascii(s)?))
+        Ok(Self(Label::from_ascii(s)?.to_lowercase()))
     }
 }
 
