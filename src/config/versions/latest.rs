@@ -227,7 +227,7 @@ impl SiteKey {
 }
 
 #[cfg(test)]
-mod tests {
+mod site_key {
     use super::*;
 
     #[test]
