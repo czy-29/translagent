@@ -38,7 +38,7 @@ framework = {
     preset = "zola",
 }
 translate = {
-    # exts = ["md"], # 不能为空
+    # exts = ["md"], # 不能为空，且不可包含空字符串
     # provider = "deepseek",
 }
 deploy = {
