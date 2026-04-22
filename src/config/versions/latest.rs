@@ -7,6 +7,7 @@ use serde_with::{DeserializeFromStr, MapPreventDuplicates, SetPreventDuplicates,
 use smart_default::SmartDefault;
 use snafu::prelude::*;
 use std::str::FromStr;
+use toml::{Value, de::Error as TomlError};
 use types::Subdir;
 use url::Url;
 
@@ -132,6 +133,86 @@ pub struct Spec {
 
     #[serde_as(as = "MapPreventDuplicates<_, _>")]
     sites: IndexMap<SiteKey, SiteValue>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Snafu)]
+pub enum ResolveError {
+    #[snafu(transparent)]
+    TomlError { source: TomlError },
+
+    #[snafu(display("`spec.defaults.target.langs` is empty"))]
+    DefaultTargetLangsEmpty,
+
+    #[snafu(display(
+        "`spec.defaults.target.langs` is not allowed to contain `spec.defaults.source.lang`: `{src_lang}`"
+    ))]
+    DefaultTargetLangsContainsSource { src_lang: Lang },
+
+    #[snafu(display("`spec.sites.{key}.target.langs` is empty"))]
+    SiteTargetLangsEmpty { key: SiteKey },
+
+    #[snafu(display(
+        "`spec.sites.{key}.target.langs` is not allowed to contain `spec.sites.{key}.source.lang`: `{src_lang}`"
+    ))]
+    SiteTargetLangsContainsSource { key: SiteKey, src_lang: Lang },
+
+    #[snafu(display("`spec.sites.{key}.translate.exts` is empty"))]
+    SiteTranslateExtsEmpty { key: SiteKey },
+
+    #[snafu(display("`spec.sites.{key}.translate.exts` contains empty extension"))]
+    SiteTranslateExtsContainsEmptyExt { key: SiteKey },
+}
+
+impl Spec {
+    pub fn resolve(value: Value) -> Result<Self, ResolveError> {
+        let mut spec: Self = value.try_into()?;
+        let defaults = spec.defaults().clone();
+        let tar_defaults = defaults.target().clone();
+
+        let src_lang = defaults.source().lang();
+        let tar_langs = tar_defaults.langs().clone();
+
+        ensure!(!tar_langs.is_empty(), DefaultTargetLangsEmptySnafu);
+        ensure!(
+            !tar_langs.contains(&src_lang),
+            DefaultTargetLangsContainsSourceSnafu { src_lang }
+        );
+
+        let target_use_github_token = tar_defaults.use_github_token();
+        let translate_provider = defaults.translate().provider();
+        let deploy_target = defaults.deploy().target();
+        let deploy_src_lang = defaults.deploy().source_lang();
+
+        for (key, value) in spec.sites.iter_mut() {
+            let key = key.clone();
+            let src_lang = *value.source.lang.get_or_insert(src_lang);
+            let tar_langs = value.target.langs.get_or_insert(tar_langs.clone());
+
+            ensure!(!tar_langs.is_empty(), SiteTargetLangsEmptySnafu { key });
+            ensure!(
+                !tar_langs.contains(&src_lang),
+                SiteTargetLangsContainsSourceSnafu { key, src_lang }
+            );
+            ensure!(
+                !value.translate().exts().is_empty(),
+                SiteTranslateExtsEmptySnafu { key }
+            );
+            ensure!(
+                !value.translate().exts().contains(""),
+                SiteTranslateExtsContainsEmptyExtSnafu { key }
+            );
+
+            value
+                .target
+                .use_github_token
+                .get_or_insert(target_use_github_token);
+            value.translate.provider.get_or_insert(translate_provider);
+            value.deploy.target.get_or_insert(deploy_target);
+            value.deploy.source_lang.get_or_insert(deploy_src_lang);
+        }
+
+        Ok(spec)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default, Getters)]
