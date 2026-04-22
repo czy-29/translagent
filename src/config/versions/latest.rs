@@ -4,6 +4,7 @@ use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
 use serde_with::{DeserializeFromStr, MapPreventDuplicates, SetPreventDuplicates, serde_as};
 use smart_default::SmartDefault;
+use snafu::prelude::*;
 use std::str::FromStr;
 use types::Subdir;
 use url::Url;
@@ -11,7 +12,6 @@ use url::Url;
 pub mod types {
     use super::*;
     use relative_path::{Component, FromPathError, RelativePathBuf};
-    use snafu::prelude::*;
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default, Display)]
     pub struct Subdir(RelativePathBuf);
@@ -208,11 +208,21 @@ pub enum ExecEnv {
 #[display("{_0:?}")]
 pub struct SiteKey(Label);
 
+#[derive(Debug, Clone, Snafu)]
+pub enum SiteKeyError {
+    #[snafu(transparent)]
+    FromAscii { source: ProtoError },
+    #[snafu(display("SiteKey does not support the use of wildcard `*`"))]
+    Wildcard,
+}
+
 impl FromStr for SiteKey {
-    type Err = ProtoError;
+    type Err = SiteKeyError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(Self(Label::from_ascii(s)?.to_lowercase()))
+        let label = Label::from_ascii(s)?;
+        ensure!(!label.is_wildcard(), WildcardSnafu);
+        Ok(Self(label.to_lowercase()))
     }
 }
 
@@ -232,8 +242,15 @@ mod site_key {
 
     #[test]
     fn site_key() {
-        fn invalid(k: &str) {
-            assert!(SiteKey::from_str(k).is_err())
+        fn from_ascii_err(k: &str) {
+            assert!(matches!(
+                SiteKey::from_str(k),
+                Err(SiteKeyError::FromAscii { source: _ })
+            ));
+        }
+
+        fn wildcard_err(k: &str) {
+            assert!(matches!(SiteKey::from_str(k), Err(SiteKeyError::Wildcard)));
         }
 
         fn valid(k: &str) {
@@ -265,10 +282,11 @@ mod site_key {
             assert!(hash_set.contains(&SiteKey::from_str(right).unwrap()));
         }
 
-        invalid("");
-        invalid("test?");
-        invalid("测试");
-        invalid("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        from_ascii_err("");
+        from_ascii_err("test?");
+        from_ascii_err("测试");
+        from_ascii_err("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        wildcard_err("*");
 
         valid("test");
         valid("Test");
