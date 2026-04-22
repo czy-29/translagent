@@ -265,13 +265,16 @@ mod site_key {
             assert!(hash_set.contains(&SiteKey::from_str(right).unwrap()));
         }
 
+        invalid("");
         invalid("test?");
         invalid("测试");
+        invalid("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         valid("test");
         valid("Test");
         valid("xn--0zwm56d");
         valid("xn--0zwm56");
+        valid("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         as_ascii("test");
         as_ascii("Test");
