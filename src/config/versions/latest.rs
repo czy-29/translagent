@@ -36,6 +36,7 @@ pub mod types {
     pub enum SubdirError {
         #[snafu(transparent)]
         FromPath { source: FromPathError },
+
         #[snafu(display("normalized path `{normalized}` escapes to parent directory"))]
         EscapedToParent { normalized: RelativePathBuf },
     }
@@ -128,6 +129,7 @@ pub mod types {
 pub struct Spec {
     defaults: Defaults,
     runner: Runner,
+
     #[serde_as(as = "MapPreventDuplicates<_, _>")]
     sites: IndexMap<SiteKey, SiteValue>,
 }
@@ -164,6 +166,7 @@ pub struct TargetDefaults {
     #[default(default_target_langs())]
     #[getset(get = "pub")]
     langs: IndexSet<Lang>,
+
     #[default(true)]
     #[getset(get_copy = "pub")]
     use_github_token: bool,
@@ -221,6 +224,7 @@ pub struct SiteKey(Label);
 pub enum SiteKeyError {
     #[snafu(transparent)]
     FromAscii { source: ProtoError },
+
     #[snafu(display("SiteKey does not support the use of wildcard `*`"))]
     Wildcard,
 }
@@ -348,8 +352,10 @@ pub struct Meta {
 #[getset(get = "pub")]
 pub struct Source {
     git: Url,
+
     #[serde(default)]
     dir: Subdir,
+
     #[getset(skip)]
     lang: Option<Lang>,
 }
@@ -365,11 +371,14 @@ impl Source {
 #[getset(get = "pub")]
 pub struct Target {
     git: Url,
+
     #[serde(default)]
     dir: Subdir,
+
     #[serde_as(as = "Option<SetPreventDuplicates<_>>")]
     #[getset(skip)]
     langs: Option<IndexSet<Lang>>,
+
     #[getset(skip)]
     use_github_token: Option<bool>,
 }
@@ -403,6 +412,7 @@ pub struct Translate {
     #[default(default_translate_exts())]
     #[getset(get = "pub")]
     exts: IndexSet<String>,
+
     provider: Option<Provider>,
 }
 
