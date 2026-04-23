@@ -1,5 +1,5 @@
 use derive_more::{Display, FromStr};
-use getset::{CopyGetters, Getters};
+use getset::Getters;
 use hickory_proto::{ProtoError, rr::domain::Label};
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
@@ -167,10 +167,10 @@ impl Spec {
     pub fn resolve(value: Value) -> Result<Self, ResolveError> {
         let mut spec: Self = value.try_into()?;
         let defaults = spec.defaults().clone();
-        let tar_defaults = defaults.target().clone();
+        let tar_defaults = defaults.target.clone();
 
-        let src_lang = defaults.source().lang();
-        let tar_langs = tar_defaults.langs().clone();
+        let src_lang = defaults.source.lang;
+        let tar_langs = tar_defaults.langs.clone();
 
         ensure!(!tar_langs.is_empty(), DefaultTargetLangsEmptySnafu);
         ensure!(
@@ -178,10 +178,10 @@ impl Spec {
             DefaultTargetLangsContainsSourceSnafu { src_lang }
         );
 
-        let target_use_github_token = tar_defaults.use_github_token();
-        let translate_provider = defaults.translate().provider();
-        let deploy_target = defaults.deploy().target();
-        let deploy_src_lang = defaults.deploy().source_lang();
+        let target_use_github_token = tar_defaults.use_github_token;
+        let translate_provider = defaults.translate.provider;
+        let deploy_target = defaults.deploy.target;
+        let deploy_src_lang = defaults.deploy.source_lang;
 
         for (key, value) in spec.sites.iter_mut() {
             let key = key.clone();
@@ -194,11 +194,11 @@ impl Spec {
                 SiteTargetLangsContainsSourceSnafu { key, src_lang }
             );
             ensure!(
-                !value.translate().exts().is_empty(),
+                !value.translate.exts.is_empty(),
                 SiteTranslateExtsEmptySnafu { key }
             );
             ensure!(
-                !value.translate().exts().contains(""),
+                !value.translate.exts.contains(""),
                 SiteTranslateExtsContainsEmptyExtSnafu { key }
             );
 
@@ -215,22 +215,20 @@ impl Spec {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default, Getters)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
 #[serde(default)]
-#[getset(get = "pub")]
 pub struct Defaults {
-    source: SourceDefaults,
-    target: TargetDefaults,
-    translate: TranslateDefaults,
-    deploy: DeployDefaults,
+    pub source: SourceDefaults,
+    pub target: TargetDefaults,
+    pub translate: TranslateDefaults,
+    pub deploy: DeployDefaults,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault, CopyGetters)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
 #[serde(default)]
-#[getset(get_copy = "pub")]
 pub struct SourceDefaults {
     #[default(Lang::En)]
-    lang: Lang,
+    pub lang: Lang,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, DeserializeFromStr, Display, FromStr)]
@@ -240,28 +238,25 @@ pub enum Lang {
 }
 
 #[serde_as]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault, Getters, CopyGetters)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct TargetDefaults {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_target_langs())]
-    #[getset(get = "pub")]
-    langs: IndexSet<Lang>,
+    pub langs: IndexSet<Lang>,
 
     #[default(true)]
-    #[getset(get_copy = "pub")]
-    use_github_token: bool,
+    pub use_github_token: bool,
 }
 
 fn default_target_langs() -> IndexSet<Lang> {
     indexset! { Lang::Zh }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default, CopyGetters)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
-#[getset(get_copy = "pub")]
 pub struct TranslateDefaults {
-    provider: Provider,
+    pub provider: Provider,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -270,12 +265,11 @@ pub enum Provider {
     Deepseek,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default, CopyGetters)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
-#[getset(get_copy = "pub")]
 pub struct DeployDefaults {
-    target: DeployTarget,
-    source_lang: bool,
+    pub target: DeployTarget,
+    pub source_lang: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -284,11 +278,10 @@ pub enum DeployTarget {
     Target,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default, CopyGetters)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
-#[getset(get_copy = "pub")]
 pub struct Runner {
-    exec_env: ExecEnv,
+    pub exec_env: ExecEnv,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -405,79 +398,71 @@ mod site_key {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Getters)]
-#[getset(get = "pub")]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct SiteValue {
     #[serde(default)]
-    meta: Meta,
+    pub meta: Meta,
 
-    source: Source,
-    target: Target,
-    framework: Framework,
-
-    #[serde(default)]
-    translate: Translate,
+    pub source: Source,
+    pub target: Target,
+    pub framework: Framework,
 
     #[serde(default)]
-    deploy: Deploy,
+    pub translate: Translate,
+
+    #[serde(default)]
+    pub deploy: Deploy,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default, Getters)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
-#[getset(get = "pub")]
 pub struct Meta {
-    desc: String,
+    pub desc: String,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Getters)]
-#[getset(get = "pub")]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
 pub struct Source {
-    git: Url,
+    pub git: Url,
 
     #[serde(default)]
-    dir: Subdir,
+    pub dir: Subdir,
 
-    #[getset(skip)]
-    lang: Option<Lang>,
+    pub lang: Option<Lang>,
 }
 
 impl Source {
-    pub fn lang(&self) -> Lang {
+    pub fn unwrap_lang(&self) -> Lang {
         self.lang.unwrap()
     }
 }
 
 #[serde_as]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, Getters)]
-#[getset(get = "pub")]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
 pub struct Target {
-    git: Url,
+    pub git: Url,
 
     #[serde(default)]
-    dir: Subdir,
+    pub dir: Subdir,
 
     #[serde_as(as = "Option<SetPreventDuplicates<_>>")]
-    #[getset(skip)]
-    langs: Option<IndexSet<Lang>>,
+    pub langs: Option<IndexSet<Lang>>,
 
-    #[getset(skip)]
-    use_github_token: Option<bool>,
+    pub use_github_token: Option<bool>,
 }
 
 impl Target {
-    pub fn langs(&self) -> &IndexSet<Lang> {
+    pub fn unwrap_langs(&self) -> &IndexSet<Lang> {
         self.langs.as_ref().unwrap()
     }
 
-    pub fn use_github_token(&self) -> bool {
+    pub fn unwrap_use_github_token(&self) -> bool {
         self.use_github_token.unwrap()
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, CopyGetters)]
-#[getset(get_copy = "pub")]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
 pub struct Framework {
-    preset: Preset,
+    pub preset: Preset,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
@@ -486,15 +471,14 @@ pub enum Preset {
 }
 
 #[serde_as]
-#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault, Getters)]
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
 #[serde(default)]
 pub struct Translate {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_translate_exts())]
-    #[getset(get = "pub")]
-    exts: IndexSet<String>,
+    pub exts: IndexSet<String>,
 
-    provider: Option<Provider>,
+    pub provider: Option<Provider>,
 }
 
 fn default_translate_exts() -> IndexSet<String> {
@@ -502,7 +486,7 @@ fn default_translate_exts() -> IndexSet<String> {
 }
 
 impl Translate {
-    pub fn provider(&self) -> Provider {
+    pub fn unwrap_provider(&self) -> Provider {
         self.provider.unwrap()
     }
 }
@@ -510,16 +494,16 @@ impl Translate {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default)]
 pub struct Deploy {
-    target: Option<DeployTarget>,
-    source_lang: Option<bool>,
+    pub target: Option<DeployTarget>,
+    pub source_lang: Option<bool>,
 }
 
 impl Deploy {
-    pub fn target(&self) -> DeployTarget {
+    pub fn unwrap_target(&self) -> DeployTarget {
         self.target.unwrap()
     }
 
-    pub fn source_lang(&self) -> bool {
+    pub fn unwrap_source_lang(&self) -> bool {
         self.source_lang.unwrap()
     }
 }
