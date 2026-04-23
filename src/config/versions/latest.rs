@@ -161,16 +161,50 @@ pub enum SpecError {
 
     #[snafu(display("`spec.sites.{key}.translate.exts` contains empty extension"))]
     SiteTranslateExtsContainsEmptyExt { key: SiteKey },
+
+    #[snafu(display("SiteKey `{key}` already exists"))]
+    SiteKeyAlreadyExists { key: SiteKey },
 }
 
 impl Spec {
     pub fn resolve(value: Value) -> Result<Self, SpecError> {
         let mut spec: Self = value.try_into()?;
         let defaults = spec.defaults().clone();
-        let tar_defaults = defaults.target.clone();
 
+        Self::ensure_defaults(&defaults)?;
+
+        for (key, value) in spec.sites.iter_mut() {
+            Self::resolve_site_value(&defaults, key, value)?;
+        }
+
+        Ok(spec)
+    }
+
+    pub fn new(defaults: Defaults, runner: Runner) -> Result<Self, SpecError> {
+        Self::ensure_defaults(&defaults)?;
+        let sites = Default::default();
+        Ok(Self {
+            defaults,
+            runner,
+            sites,
+        })
+    }
+
+    pub fn add_site(&mut self, key: SiteKey, mut value: SiteValue) -> Result<(), SpecError> {
+        ensure!(
+            !self.sites().contains_key(&key),
+            SiteKeyAlreadyExistsSnafu { key }
+        );
+
+        Self::resolve_site_value(self.defaults(), &key, &mut value)?;
+        self.sites.insert(key, value);
+
+        Ok(())
+    }
+
+    fn ensure_defaults(defaults: &Defaults) -> Result<(), SpecError> {
         let src_lang = defaults.source.lang;
-        let tar_langs = tar_defaults.langs.clone();
+        let tar_langs = &defaults.target.langs;
 
         ensure!(!tar_langs.is_empty(), DefaultTargetLangsEmptySnafu);
         ensure!(
@@ -178,40 +212,48 @@ impl Spec {
             DefaultTargetLangsContainsSourceSnafu { src_lang }
         );
 
-        let target_use_github_token = tar_defaults.use_github_token;
+        Ok(())
+    }
+
+    fn resolve_site_value(
+        defaults: &Defaults,
+        key: &SiteKey,
+        value: &mut SiteValue,
+    ) -> Result<(), SpecError> {
+        let key = key.clone();
+        let src_lang = defaults.source.lang;
+        let tar_langs = defaults.target.langs.clone();
+        let target_use_github_token = defaults.target.use_github_token;
         let translate_provider = defaults.translate.provider;
         let deploy_target = defaults.deploy.target;
         let deploy_src_lang = defaults.deploy.source_lang;
 
-        for (key, value) in spec.sites.iter_mut() {
-            let key = key.clone();
-            let src_lang = *value.source.lang.get_or_insert(src_lang);
-            let tar_langs = value.target.langs.get_or_insert(tar_langs.clone());
+        let src_lang = *value.source.lang.get_or_insert(src_lang);
+        let tar_langs = value.target.langs.get_or_insert(tar_langs);
 
-            ensure!(!tar_langs.is_empty(), SiteTargetLangsEmptySnafu { key });
-            ensure!(
-                !tar_langs.contains(&src_lang),
-                SiteTargetLangsContainsSourceSnafu { key, src_lang }
-            );
-            ensure!(
-                !value.translate.exts.is_empty(),
-                SiteTranslateExtsEmptySnafu { key }
-            );
-            ensure!(
-                !value.translate.exts.contains(""),
-                SiteTranslateExtsContainsEmptyExtSnafu { key }
-            );
+        ensure!(!tar_langs.is_empty(), SiteTargetLangsEmptySnafu { key });
+        ensure!(
+            !tar_langs.contains(&src_lang),
+            SiteTargetLangsContainsSourceSnafu { key, src_lang }
+        );
+        ensure!(
+            !value.translate.exts.is_empty(),
+            SiteTranslateExtsEmptySnafu { key }
+        );
+        ensure!(
+            !value.translate.exts.contains(""),
+            SiteTranslateExtsContainsEmptyExtSnafu { key }
+        );
 
-            value
-                .target
-                .use_github_token
-                .get_or_insert(target_use_github_token);
-            value.translate.provider.get_or_insert(translate_provider);
-            value.deploy.target.get_or_insert(deploy_target);
-            value.deploy.source_lang.get_or_insert(deploy_src_lang);
-        }
+        value
+            .target
+            .use_github_token
+            .get_or_insert(target_use_github_token);
+        value.translate.provider.get_or_insert(translate_provider);
+        value.deploy.target.get_or_insert(deploy_target);
+        value.deploy.source_lang.get_or_insert(deploy_src_lang);
 
-        Ok(spec)
+        Ok(())
     }
 }
 
