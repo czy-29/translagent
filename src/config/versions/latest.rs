@@ -136,7 +136,7 @@ pub struct Spec {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Snafu)]
-pub enum ResolveError {
+pub enum SpecError {
     #[snafu(transparent)]
     TomlError { source: TomlError },
 
@@ -164,7 +164,7 @@ pub enum ResolveError {
 }
 
 impl Spec {
-    pub fn resolve(value: Value) -> Result<Self, ResolveError> {
+    pub fn resolve(value: Value) -> Result<Self, SpecError> {
         let mut spec: Self = value.try_into()?;
         let defaults = spec.defaults().clone();
         let tar_defaults = defaults.target.clone();
