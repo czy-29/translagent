@@ -11,6 +11,9 @@ use toml::{Value, de::Error as TomlError};
 use types::Subdir;
 use url::Url;
 
+#[cfg(test)]
+mod tests;
+
 pub mod types {
     use super::*;
     use relative_path::{Component, FromPathError, RelativePathBuf};
