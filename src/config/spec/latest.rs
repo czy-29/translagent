@@ -125,7 +125,7 @@ pub mod types {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default, Getters)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 #[getset(get = "pub")]
 pub struct Spec {
     defaults: Defaults,
@@ -258,7 +258,7 @@ impl Spec {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Defaults {
     pub source: SourceDefaults,
     pub target: TargetDefaults,
@@ -267,7 +267,7 @@ pub struct Defaults {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, SmartDefault)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct SourceDefaults {
     #[default(Lang::En)]
     pub lang: Lang,
@@ -281,7 +281,7 @@ pub enum Lang {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct TargetDefaults {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_target_langs())]
@@ -296,7 +296,7 @@ fn default_target_langs() -> IndexSet<Lang> {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct TranslateDefaults {
     pub provider: Provider,
 }
@@ -308,7 +308,7 @@ pub enum Provider {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct DeployDefaults {
     pub target: DeployTarget,
     pub source_lang: bool,
@@ -321,7 +321,7 @@ pub enum DeployTarget {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Runner {
     pub exec_env: ExecEnv,
 }
@@ -441,6 +441,7 @@ mod site_key {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SiteValue {
     #[serde(default)]
     pub meta: Meta,
@@ -457,12 +458,13 @@ pub struct SiteValue {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Meta {
     pub desc: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Source {
     pub git: Url,
 
@@ -480,6 +482,7 @@ impl Source {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Target {
     pub git: Url,
 
@@ -503,6 +506,7 @@ impl Target {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Framework {
     pub preset: Preset,
 }
@@ -514,7 +518,7 @@ pub enum Preset {
 
 #[serde_as]
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize, SmartDefault)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Translate {
     #[serde_as(as = "SetPreventDuplicates<_>")]
     #[default(default_translate_exts())]
@@ -534,7 +538,7 @@ impl Translate {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Deploy {
     pub target: Option<DeployTarget>,
     pub source_lang: Option<bool>,
