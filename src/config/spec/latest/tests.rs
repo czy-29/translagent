@@ -15,9 +15,49 @@ fn resolve() {
         ))
     }
 
+    fn eq(toml: &str, spec: Spec) {
+        assert_eq!(Spec::resolve(from_str(toml).unwrap()).unwrap(), spec);
+    }
+
     value_error("fuck");
     toml_error("[fuck]");
+    //toml_error("defaults.translate.provider = \"DeepseekChat\"");
     toml_error(include_str!("tests/fuck.toml"));
+
+    eq("", Default::default());
+    eq(
+        "",
+        Spec {
+            defaults: Defaults {
+                source: SourceDefaults { lang: Lang::En },
+                target: TargetDefaults {
+                    langs: indexset! { Lang::Zh },
+                    use_github_token: true,
+                },
+                translate: TranslateDefaults {
+                    provider: Provider::DeepseekReasoner,
+                },
+                deploy: DeployDefaults {
+                    target: DeployTarget::Target,
+                    source_lang: false,
+                },
+            },
+            ..Default::default()
+        },
+    );
+    eq(
+        //"defaults.translate.provider = \"deepseek-chat\"",
+        "defaults.translate.provider = \"DeepseekChat\"",
+        Spec {
+            defaults: Defaults {
+                translate: TranslateDefaults {
+                    provider: Provider::DeepseekChat,
+                },
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    );
 }
 
 #[test]
