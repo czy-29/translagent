@@ -1,4 +1,4 @@
-pub mod versions {
+pub mod spec {
     pub mod latest;
 }
 
