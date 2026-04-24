@@ -307,7 +307,8 @@ pub struct TranslateDefaults {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 pub enum Provider {
     #[default]
-    Deepseek,
+    DeepseekReasoner,
+    DeepseekChat,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
