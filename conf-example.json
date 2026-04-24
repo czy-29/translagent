@@ -6,7 +6,7 @@
         "use_github_token": false
       },
       "translate": {
-        "provider": "deepseek"
+        "provider": "deepseek-reasoner"
       },
       "deploy": {
         "target": "target",

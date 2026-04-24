@@ -6,7 +6,7 @@ target = {
     # langs = ["zh"], # target.langs不能为空，且不可包含source.lang
     use_github_token = false, # default: true
 }
-# translate = { provider = "deepseek" }
+# translate = { provider = "deepseek-reasoner" }
 deploy = {
     # target = "target",
     source_lang = true, # default: false
@@ -39,7 +39,7 @@ framework = {
 }
 translate = {
     # exts = ["md"], # 不能为空，且不可包含空字符串
-    # provider = "deepseek",
+    # provider = "deepseek-reasoner",
 }
 deploy = {
     # target = "target",
@@ -67,7 +67,7 @@ framework = {
 }
 translate = {
     # exts = ["md"],
-    # provider = "deepseek",
+    # provider = "deepseek-reasoner",
 }
 deploy = {
     # target = "target",
