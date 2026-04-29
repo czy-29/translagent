@@ -228,6 +228,7 @@ impl Spec {
         let tar_langs = defaults.target.langs.clone();
         let target_use_github_token = defaults.target.use_github_token;
         let translate_model = defaults.translate.model;
+        let translate_thinking = defaults.translate.thinking;
         let deploy_target = defaults.deploy.target;
         let deploy_src_lang = defaults.deploy.source_lang;
 
@@ -253,6 +254,7 @@ impl Spec {
             .use_github_token
             .get_or_insert(target_use_github_token);
         value.translate.model.get_or_insert(translate_model);
+        value.translate.thinking.get_or_insert(translate_thinking);
         value.deploy.target.get_or_insert(deploy_target);
         value.deploy.source_lang.get_or_insert(deploy_src_lang);
 
@@ -302,6 +304,7 @@ fn default_target_langs() -> IndexSet<Lang> {
 #[serde(default, deny_unknown_fields)]
 pub struct TranslateDefaults {
     pub model: Model,
+    pub thinking: Thinking,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -309,6 +312,14 @@ pub enum Model {
     #[default]
     DeepseekV4Pro,
     DeepseekV4Flash,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+pub enum Thinking {
+    #[default]
+    Max,
+    High,
+    Disabled,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
@@ -529,6 +540,7 @@ pub struct Translate {
     pub exts: IndexSet<String>,
 
     pub model: Option<Model>,
+    pub thinking: Option<Thinking>,
 }
 
 fn default_translate_exts() -> IndexSet<String> {
@@ -538,6 +550,10 @@ fn default_translate_exts() -> IndexSet<String> {
 impl Translate {
     pub fn unwrap_model(&self) -> Model {
         self.model.unwrap()
+    }
+
+    pub fn unwrap_thinking(&self) -> Thinking {
+        self.thinking.unwrap()
     }
 }
 

@@ -36,6 +36,7 @@ fn resolve() {
                 },
                 translate: TranslateDefaults {
                     model: Model::DeepseekV4Pro,
+                    thinking: Thinking::Max,
                 },
                 deploy: DeployDefaults {
                     target: DeployTarget::Target,
@@ -48,10 +49,12 @@ fn resolve() {
     eq(
         //"defaults.translate.model = \"deepseek-v4-flash\"",
         "defaults.translate.model = \"DeepseekV4Flash\"",
+        // todo: test thinking
         Spec {
             defaults: Defaults {
                 translate: TranslateDefaults {
                     model: Model::DeepseekV4Flash,
+                    thinking: Thinking::Max,
                 },
                 ..Default::default()
             },
