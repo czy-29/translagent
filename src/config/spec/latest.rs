@@ -227,7 +227,7 @@ impl Spec {
         let src_lang = defaults.source.lang;
         let tar_langs = defaults.target.langs.clone();
         let target_use_github_token = defaults.target.use_github_token;
-        let translate_provider = defaults.translate.provider;
+        let translate_model = defaults.translate.model;
         let deploy_target = defaults.deploy.target;
         let deploy_src_lang = defaults.deploy.source_lang;
 
@@ -252,7 +252,7 @@ impl Spec {
             .target
             .use_github_token
             .get_or_insert(target_use_github_token);
-        value.translate.provider.get_or_insert(translate_provider);
+        value.translate.model.get_or_insert(translate_model);
         value.deploy.target.get_or_insert(deploy_target);
         value.deploy.source_lang.get_or_insert(deploy_src_lang);
 
@@ -301,11 +301,11 @@ fn default_target_langs() -> IndexSet<Lang> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
 #[serde(default, deny_unknown_fields)]
 pub struct TranslateDefaults {
-    pub provider: Provider,
+    pub model: Model,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
-pub enum Provider {
+pub enum Model {
     #[default]
     DeepseekV4Pro,
     DeepseekV4Flash,
@@ -528,7 +528,7 @@ pub struct Translate {
     #[default(default_translate_exts())]
     pub exts: IndexSet<String>,
 
-    pub provider: Option<Provider>,
+    pub model: Option<Model>,
 }
 
 fn default_translate_exts() -> IndexSet<String> {
@@ -536,8 +536,8 @@ fn default_translate_exts() -> IndexSet<String> {
 }
 
 impl Translate {
-    pub fn unwrap_provider(&self) -> Provider {
-        self.provider.unwrap()
+    pub fn unwrap_model(&self) -> Model {
+        self.model.unwrap()
     }
 }
 
