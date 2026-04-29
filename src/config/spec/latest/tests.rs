@@ -21,7 +21,7 @@ fn resolve() {
 
     value_error("fuck");
     toml_error("[fuck]");
-    //toml_error("defaults.translate.provider = \"DeepseekChat\"");
+    //toml_error("defaults.translate.provider = \"DeepseekV4Flash\"");
     toml_error(include_str!("tests/fuck.toml"));
 
     eq("", Default::default());
@@ -35,7 +35,7 @@ fn resolve() {
                     use_github_token: true,
                 },
                 translate: TranslateDefaults {
-                    provider: Provider::DeepseekReasoner,
+                    provider: Provider::DeepseekV4Pro,
                 },
                 deploy: DeployDefaults {
                     target: DeployTarget::Target,
@@ -46,12 +46,12 @@ fn resolve() {
         },
     );
     eq(
-        //"defaults.translate.provider = \"deepseek-chat\"",
-        "defaults.translate.provider = \"DeepseekChat\"",
+        //"defaults.translate.provider = \"deepseek-v4-flash\"",
+        "defaults.translate.provider = \"DeepseekV4Flash\"",
         Spec {
             defaults: Defaults {
                 translate: TranslateDefaults {
-                    provider: Provider::DeepseekChat,
+                    provider: Provider::DeepseekV4Flash,
                 },
                 ..Default::default()
             },
