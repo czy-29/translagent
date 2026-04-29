@@ -6,7 +6,8 @@
         "use_github_token": false
       },
       "translate": {
-        "provider": "deepseek-v4-pro"
+        "model": "deepseek-v4-pro",
+        "thinking": "max"
       },
       "deploy": {
         "target": "target",
