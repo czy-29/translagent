@@ -1,22 +1,25 @@
 use derive_more::{Display, FromStr};
+use errors::*;
 use getset::Getters;
-use hickory_proto::{ProtoError, rr::domain::Label};
+use hickory_proto::rr::domain::Label;
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
 use serde_with::{DeserializeFromStr, MapPreventDuplicates, SetPreventDuplicates, serde_as};
 use smart_default::SmartDefault;
 use snafu::prelude::*;
 use std::str::FromStr;
-use toml::{Value, de::Error as TomlError};
+use toml::Value;
 use types::Subdir;
 use url::Url;
+
+pub mod errors;
 
 #[cfg(test)]
 mod tests;
 
 pub mod types {
     use super::*;
-    use relative_path::{Component, FromPathError, RelativePathBuf};
+    use relative_path::{Component, RelativePathBuf};
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default, Display)]
     pub struct Subdir(RelativePathBuf);
@@ -34,15 +37,6 @@ pub mod types {
 
             Ok(Self(normalized))
         }
-    }
-
-    #[derive(Debug, Clone, PartialEq, Eq, Snafu)]
-    pub enum SubdirError {
-        #[snafu(transparent)]
-        FromPath { source: FromPathError },
-
-        #[snafu(display("normalized path `{normalized}` escapes to parent directory"))]
-        EscapedToParent { normalized: RelativePathBuf },
     }
 
     #[cfg(test)]
@@ -136,37 +130,6 @@ pub struct Spec {
 
     #[serde_as(as = "MapPreventDuplicates<_, _>")]
     sites: IndexMap<SiteKey, SiteValue>,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Snafu)]
-pub enum SpecError {
-    #[snafu(transparent)]
-    TomlError { source: TomlError },
-
-    #[snafu(display("`spec.defaults.target.langs` is empty"))]
-    DefaultTargetLangsEmpty,
-
-    #[snafu(display(
-        "`spec.defaults.target.langs` is not allowed to contain `spec.defaults.source.lang`: `{src_lang}`"
-    ))]
-    DefaultTargetLangsContainsSource { src_lang: Lang },
-
-    #[snafu(display("`spec.sites.{key}.target.langs` is empty"))]
-    SiteTargetLangsEmpty { key: SiteKey },
-
-    #[snafu(display(
-        "`spec.sites.{key}.target.langs` is not allowed to contain `spec.sites.{key}.source.lang`: `{src_lang}`"
-    ))]
-    SiteTargetLangsContainsSource { key: SiteKey, src_lang: Lang },
-
-    #[snafu(display("`spec.sites.{key}.translate.exts` is empty"))]
-    SiteTranslateExtsEmpty { key: SiteKey },
-
-    #[snafu(display("`spec.sites.{key}.translate.exts` contains empty extension"))]
-    SiteTranslateExtsContainsEmptyExt { key: SiteKey },
-
-    #[snafu(display("SiteKey `{key}` already exists"))]
-    SiteKeyAlreadyExists { key: SiteKey },
 }
 
 impl Spec {
@@ -356,15 +319,6 @@ pub enum ExecEnv {
 #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Display)]
 #[display("{_0:?}")]
 pub struct SiteKey(Label);
-
-#[derive(Debug, Clone, Snafu)]
-pub enum SiteKeyError {
-    #[snafu(transparent)]
-    FromAscii { source: ProtoError },
-
-    #[snafu(display("SiteKey does not support the use of wildcard `*`"))]
-    Wildcard,
-}
 
 impl FromStr for SiteKey {
     type Err = SiteKeyError;
