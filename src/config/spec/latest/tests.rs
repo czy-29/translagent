@@ -47,13 +47,64 @@ fn resolve() {
         },
     );
     eq(
+        "defaults.translate.model = \"deepseek-v4-pro\"",
+        Spec {
+            defaults: Defaults {
+                translate: TranslateDefaults {
+                    model: Model::DeepseekV4Pro,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    );
+    eq(
         "defaults.translate.model = \"deepseek-v4-flash\"",
-        // todo: test thinking
         Spec {
             defaults: Defaults {
                 translate: TranslateDefaults {
                     model: Model::DeepseekV4Flash,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    );
+    eq(
+        "defaults.translate.thinking = \"max\"",
+        Spec {
+            defaults: Defaults {
+                translate: TranslateDefaults {
                     thinking: Thinking::Max,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    );
+    eq(
+        "defaults.translate.thinking = \"high\"",
+        Spec {
+            defaults: Defaults {
+                translate: TranslateDefaults {
+                    thinking: Thinking::High,
+                    ..Default::default()
+                },
+                ..Default::default()
+            },
+            ..Default::default()
+        },
+    );
+    eq(
+        "defaults.translate.thinking = \"disabled\"",
+        Spec {
+            defaults: Defaults {
+                translate: TranslateDefaults {
+                    thinking: Thinking::Disabled,
+                    ..Default::default()
                 },
                 ..Default::default()
             },
