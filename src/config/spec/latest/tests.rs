@@ -21,7 +21,7 @@ fn resolve() {
 
     value_error("fuck");
     toml_error("[fuck]");
-    //toml_error("defaults.translate.model = \"DeepseekV4Flash\"");
+    toml_error("defaults.translate.model = \"DeepseekV4Flash\"");
     toml_error(include_str!("tests/fuck.toml"));
 
     eq("", Default::default());
@@ -47,8 +47,7 @@ fn resolve() {
         },
     );
     eq(
-        //"defaults.translate.model = \"deepseek-v4-flash\"",
-        "defaults.translate.model = \"DeepseekV4Flash\"",
+        "defaults.translate.model = \"deepseek-v4-flash\"",
         // todo: test thinking
         Spec {
             defaults: Defaults {

@@ -279,6 +279,8 @@ pub struct SourceDefaults {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, DeserializeFromStr, Display, FromStr)]
+#[display(rename_all = "kebab-case")]
+#[from_str(rename_all = "kebab-case")]
 pub enum Lang {
     En,
     Zh,
@@ -308,6 +310,7 @@ pub struct TranslateDefaults {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
 pub enum Model {
     #[default]
     DeepseekV4Pro,
@@ -315,6 +318,7 @@ pub enum Model {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
 pub enum Thinking {
     #[default]
     Max,
@@ -330,6 +334,7 @@ pub struct DeployDefaults {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
 pub enum DeployTarget {
     #[default]
     Target,
@@ -342,6 +347,7 @@ pub struct Runner {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize, Default)]
+#[serde(rename_all = "kebab-case")]
 pub enum ExecEnv {
     #[default]
     GithubActions,
@@ -527,6 +533,7 @@ pub struct Framework {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Deserialize)]
+#[serde(rename_all = "kebab-case")]
 pub enum Preset {
     Zola,
 }
