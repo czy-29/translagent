@@ -1,15 +1,13 @@
 use derive_more::{Display, FromStr};
 use errors::*;
 use getset::Getters;
-use hickory_proto::rr::domain::Label;
 use indexmap::{IndexMap, IndexSet, indexset};
 use serde::Deserialize;
 use serde_with::{DeserializeFromStr, MapPreventDuplicates, SetPreventDuplicates, serde_as};
 use smart_default::SmartDefault;
 use snafu::prelude::*;
-use std::str::FromStr;
 use toml::Value;
-use types::Subdir;
+use types::{SiteKey, Subdir};
 use url::Url;
 
 pub mod errors;
@@ -19,7 +17,9 @@ mod tests;
 
 pub mod types {
     use super::*;
+    use hickory_proto::rr::domain::Label;
     use relative_path::{Component, RelativePathBuf};
+    use std::str::FromStr;
 
     #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Default, Display)]
     pub struct Subdir(RelativePathBuf);
@@ -36,6 +36,30 @@ pub mod types {
             );
 
             Ok(Self(normalized))
+        }
+    }
+
+    #[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Display)]
+    #[display("{_0:?}")]
+    pub struct SiteKey(Label);
+
+    impl FromStr for SiteKey {
+        type Err = SiteKeyError;
+
+        fn from_str(s: &str) -> Result<Self, Self::Err> {
+            let label = Label::from_ascii(s)?;
+            ensure!(!label.is_wildcard(), WildcardSnafu);
+            Ok(Self(label.to_lowercase()))
+        }
+    }
+
+    impl SiteKey {
+        pub fn as_ascii(&self) -> String {
+            self.to_string()
+        }
+
+        pub fn to_unicode(&self) -> String {
+            self.0.to_utf8()
         }
     }
 
@@ -116,6 +140,76 @@ pub mod types {
             escaped("../test1/test2");
 
             escaped("test/../..");
+        }
+
+        #[test]
+        fn site_key() {
+            fn from_ascii_err(k: &str) {
+                assert!(matches!(
+                    SiteKey::from_str(k),
+                    Err(SiteKeyError::FromAscii { source: _ })
+                ));
+            }
+
+            fn wildcard_err(k: &str) {
+                assert!(matches!(SiteKey::from_str(k), Err(SiteKeyError::Wildcard)));
+            }
+
+            fn valid(k: &str) {
+                assert_eq!(SiteKey::from_str(k).unwrap().to_string(), k.to_lowercase());
+            }
+
+            fn as_ascii(k: &str) {
+                assert_eq!(SiteKey::from_str(k).unwrap().as_ascii(), k.to_lowercase());
+            }
+
+            fn ascii_unicode(k: &str) {
+                assert_eq!(SiteKey::from_str(k).unwrap().to_unicode(), k.to_lowercase());
+            }
+
+            fn to_unicode(k: &str, unicode: &str) {
+                assert_eq!(SiteKey::from_str(k).unwrap().to_unicode(), unicode);
+            }
+
+            fn eq(left: &str, right: &str) {
+                assert_eq!(
+                    SiteKey::from_str(left).unwrap(),
+                    SiteKey::from_str(right).unwrap()
+                );
+            }
+
+            fn hash(left: &str, right: &str) {
+                let mut hash_set = std::collections::HashSet::new();
+                hash_set.insert(SiteKey::from_str(left).unwrap());
+                assert!(hash_set.contains(&SiteKey::from_str(right).unwrap()));
+            }
+
+            from_ascii_err("");
+            from_ascii_err("test?");
+            from_ascii_err("测试");
+            from_ascii_err("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            wildcard_err("*");
+
+            valid("test");
+            valid("Test");
+            valid("xn--0zwm56d");
+            valid("xn--0zwm56");
+            valid("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+            as_ascii("test");
+            as_ascii("Test");
+            as_ascii("xn--0zwm56d");
+            as_ascii("xn--0zwm56");
+
+            ascii_unicode("test");
+            ascii_unicode("Test");
+            ascii_unicode("xn--0zwm56");
+            to_unicode("xn--0zwm56d", "测试");
+
+            eq("test", "test");
+            eq("test", "Test");
+            hash("test", "test");
+            hash("test", "Test");
         }
     }
 }
@@ -314,105 +408,6 @@ pub struct Runner {
 pub enum ExecEnv {
     #[default]
     GithubActions,
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, DeserializeFromStr, Display)]
-#[display("{_0:?}")]
-pub struct SiteKey(Label);
-
-impl FromStr for SiteKey {
-    type Err = SiteKeyError;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let label = Label::from_ascii(s)?;
-        ensure!(!label.is_wildcard(), WildcardSnafu);
-        Ok(Self(label.to_lowercase()))
-    }
-}
-
-impl SiteKey {
-    pub fn as_ascii(&self) -> String {
-        self.to_string()
-    }
-
-    pub fn to_unicode(&self) -> String {
-        self.0.to_utf8()
-    }
-}
-
-#[cfg(test)]
-mod site_key {
-    use super::*;
-
-    #[test]
-    fn site_key() {
-        fn from_ascii_err(k: &str) {
-            assert!(matches!(
-                SiteKey::from_str(k),
-                Err(SiteKeyError::FromAscii { source: _ })
-            ));
-        }
-
-        fn wildcard_err(k: &str) {
-            assert!(matches!(SiteKey::from_str(k), Err(SiteKeyError::Wildcard)));
-        }
-
-        fn valid(k: &str) {
-            assert_eq!(SiteKey::from_str(k).unwrap().to_string(), k.to_lowercase());
-        }
-
-        fn as_ascii(k: &str) {
-            assert_eq!(SiteKey::from_str(k).unwrap().as_ascii(), k.to_lowercase());
-        }
-
-        fn ascii_unicode(k: &str) {
-            assert_eq!(SiteKey::from_str(k).unwrap().to_unicode(), k.to_lowercase());
-        }
-
-        fn to_unicode(k: &str, unicode: &str) {
-            assert_eq!(SiteKey::from_str(k).unwrap().to_unicode(), unicode);
-        }
-
-        fn eq(left: &str, right: &str) {
-            assert_eq!(
-                SiteKey::from_str(left).unwrap(),
-                SiteKey::from_str(right).unwrap()
-            );
-        }
-
-        fn hash(left: &str, right: &str) {
-            let mut hash_set = std::collections::HashSet::new();
-            hash_set.insert(SiteKey::from_str(left).unwrap());
-            assert!(hash_set.contains(&SiteKey::from_str(right).unwrap()));
-        }
-
-        from_ascii_err("");
-        from_ascii_err("test?");
-        from_ascii_err("测试");
-        from_ascii_err("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        wildcard_err("*");
-
-        valid("test");
-        valid("Test");
-        valid("xn--0zwm56d");
-        valid("xn--0zwm56");
-        valid("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
-        as_ascii("test");
-        as_ascii("Test");
-        as_ascii("xn--0zwm56d");
-        as_ascii("xn--0zwm56");
-
-        ascii_unicode("test");
-        ascii_unicode("Test");
-        ascii_unicode("xn--0zwm56");
-        to_unicode("xn--0zwm56d", "测试");
-
-        eq("test", "test");
-        eq("test", "Test");
-        hash("test", "test");
-        hash("test", "Test");
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
